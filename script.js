@@ -201,7 +201,7 @@ function getStatusLabel(code) {
 }
 
 /* =========================================
-   3. RENDU LISTE (AVEC OVERLAY TOOLTIP)
+   3. RENDU LISTE (CORRIGÉ MOBILE & CLIC)
    ========================================= */
 function renderList() {
     const container = document.getElementById('listContainer');
@@ -226,10 +226,7 @@ function renderList() {
             : "border-l-4 border-l-transparent hover:bg-white hover:shadow-sm my-1 rounded-r-md";
 
         card.className = `p-4 cursor-pointer transition-all ${activeClass}`;
-        
-        // --- LE CLIC QUI ÉTAIT PEUT-ÊTRE CASSÉ ---
         card.onclick = () => selectItem(item); 
-        // -----------------------------------------
 
         if (currentTab === 'OFFRES') {
             let badgeClass = "";
@@ -237,23 +234,24 @@ function renderList() {
             else if (item.status === "A L'ETUDE") badgeClass = "bg-[#FFF3DC] text-[#9A6B16]";
             else if (item.status === "VENDU") badgeClass = "bg-gray-100 text-gray-500";
 
-            // Tooltips avec Overlay
+            // --- CORRECTION ICI : AJOUT DE onclick="event.stopPropagation()..." ---
             let indicators = '';
             if (item.contacted) {
                 indicators = `
-                <span onmouseenter="showTooltip(event, 'Intérêt signalé')" onmouseleave="hideTooltip()" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 text-blue-600 cursor-pointer hover:bg-blue-100 transition-colors">
+                <span onmouseenter="showTooltip(event, 'Intérêt signalé')" onclick="event.stopPropagation(); showTooltip(event, 'Intérêt signalé')" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 text-blue-600 cursor-pointer hover:bg-blue-100 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </span>`;
             } else if (item.waitlisted) {
                 indicators = `
-                <span onmouseenter="showTooltip(event, 'Sur liste d\\'attente')" onmouseleave="hideTooltip()" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-amber-600 border border-amber-100 cursor-pointer hover:bg-amber-100 transition-colors">
+                <span onmouseenter="showTooltip(event, 'Sur liste d\\'attente')" onclick="event.stopPropagation(); showTooltip(event, 'Sur liste d\\'attente')" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-amber-50 text-amber-600 border border-amber-100 cursor-pointer hover:bg-amber-100 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </span>`;
             }
 
             let certifiedIcon = '';
             if(item.sellerType === "Courtier Certifié") {
-                certifiedIcon = `<span onmouseenter="showTooltip(event, 'Courtier Certifié')" onmouseleave="hideTooltip()"><svg class="w-4 h-4 text-amber-500 ml-1.5 inline-block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg></span>`;
+                // --- CORRECTION ICI AUSSI ---
+                certifiedIcon = `<span onmouseenter="showTooltip(event, 'Courtier Certifié')" onclick="event.stopPropagation(); showTooltip(event, 'Courtier Certifié')"><svg class="w-4 h-4 text-amber-500 ml-1.5 inline-block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg></span>`;
             }
 
             const totalPrice = item.price * item.qty;
@@ -267,8 +265,9 @@ function renderList() {
             // DEMANDES
             let indicators = '';
             if (item.contacted) {
+                // --- CORRECTION ICI AUSSI ---
                 indicators = `
-                <span onmouseenter="showTooltip(event, 'Réponse envoyée')" onmouseleave="hideTooltip()" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 text-blue-600 cursor-pointer hover:bg-blue-100 transition-colors">
+                <span onmouseenter="showTooltip(event, 'Réponse envoyée')" onclick="event.stopPropagation(); showTooltip(event, 'Réponse envoyée')" class="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 text-blue-600 cursor-pointer hover:bg-blue-100 transition-colors">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </span>`;
             }
@@ -514,8 +513,13 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-/* --- GLOBAL TOOLTIP SYSTEM (OVERLAY) --- */
+/* --- GLOBAL TOOLTIP SYSTEM --- */
+let tooltipTimer;
+
 function showTooltip(event, text) {
+    // 1. Reset timer précédent
+    if (tooltipTimer) clearTimeout(tooltipTimer);
+
     const tooltip = document.getElementById('globalTooltip');
     const rect = event.currentTarget.getBoundingClientRect();
     
@@ -527,16 +531,22 @@ function showTooltip(event, text) {
     let top = rect.top - tooltipRect.height - 8; 
     let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
     
-    if (top < 10) {
-        top = rect.bottom + 8;
-    }
+    if (top < 10) top = rect.bottom + 8;
+    if (left < 5) left = 5;
+    if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 5;
 
     tooltip.style.top = `${top}px`;
     tooltip.style.left = `${left}px`;
+
+    // 2. DISPARITION AUTO APRÈS XX SECONDES
+    tooltipTimer = setTimeout(() => {
+        hideTooltip();
+    }, 1000);
 }
 
 function hideTooltip() {
     document.getElementById('globalTooltip').classList.add('hidden');
+    if (tooltipTimer) clearTimeout(tooltipTimer);
 }
 
 // INIT
