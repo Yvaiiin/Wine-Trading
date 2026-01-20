@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2250%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22 font-size=%2260%22 text-anchor=%22middle%22 dy=%22.35em%22>W</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Trading B2B - V5.8 Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-30 relative shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-slate-900 rounded flex items-center justify-center text-white font-bold text-lg">W</div>
+            <span class="font-semibold text-gray-900 tracking-tight hidden md:block">WINE TRADING <span class="text-gray-400 font-normal">B2B</span></span>
+        </div>
+        <button id="mobileMenuBtn" class="md:hidden text-gray-500 hover:text-gray-900">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div class="hidden md:flex items-center gap-4">
+            <div class="text-right leading-tight">
+                <div class="text-sm font-semibold text-gray-900">Jean Dupont</div>
+                <div class="text-xs text-gray-500">Négociant (USER_2)</div>
+            </div>
+            <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-medium text-slate-600">JD</div>
+        </div>
+    </header>
+
+    <main class="flex flex-1 overflow-hidden relative">
+        <aside id="offersPanel" class="w-full md:w-[450px] bg-slate-50 border-r border-gray-200 flex flex-col z-10 transition-transform absolute md:relative inset-0 md:inset-auto">
+            <div class="px-4 pt-4 pb-2 bg-slate-50 z-10 shadow-sm">
+                <div class="flex p-1 bg-gray-200/50 rounded-lg mb-3">
+                    <button id="tabOffers" onclick="switchTab('OFFRES')" class="flex-1 py-1.5 text-xs font-semibold rounded-md shadow-sm bg-white text-gray-900 transition-all text-center border border-gray-200">OFFRES (Vente)</button>
+                    <button id="tabDemands" onclick="switchTab('DEMANDES')" class="flex-1 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 transition-all text-center">DEMANDES (Achat)</button>
+                </div>
+                <div class="flex gap-2 mb-3">
+                    <div class="relative flex-1">
+                        <input type="text" id="searchInput" onkeyup="filterList()" placeholder="Rechercher (Nom, Réf...)" class="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-inter h-9">
+                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <button onclick="showToast('Ouverture Filtres Avancés')" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    </button>
+                </div>
+                <div id="statusFilters" class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                    <button onclick="filterStatus('ALL')" class="status-pill active px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-slate-800 bg-slate-800 text-white transition-colors">Tout</button>
+                    <button onclick="filterStatus('DISPONIBLE')" class="status-pill px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-gray-200 text-gray-500 hover:border-green-200 hover:bg-green-50 hover:text-green-700 transition-colors">Disponible</button>
+                    <button onclick="filterStatus('ETUDE')" class="status-pill px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-gray-200 text-gray-500 hover:border-orange-200 hover:bg-orange-50 hover:text-orange-700 transition-colors">À l'étude</button>
+                    <button onclick="filterStatus('VENDU')" class="status-pill px-3 py-1 rounded-full text-[10px] font-bold uppercase border border-gray-200 text-gray-500 hover:border-red-200 hover:bg-red-50 hover:text-red-700 transition-colors">Vendu</button>
+                </div>
+            </div>
+            <div id="listContainer" class="overflow-y-auto flex-1 bg-slate-50 relative pb-10 px-2"></div>
+        </aside>
+
+        <section id="detailPanel" class="hidden md:flex flex-1 bg-white flex-col absolute inset-0 md:static z-20 md:z-auto fade-in h-full">
+            <div class="md:hidden p-3 border-b border-gray-200 bg-white flex items-center gap-2 sticky top-0 z-30 shrink-0">
+                <button onclick="closeDetailMobile()" class="flex items-center text-indigo-600 font-medium text-sm hover:text-indigo-800">Retour</button>
+            </div>
+            <div id="detailHeaderTools" class="hidden md:flex px-6 py-3 border-b border-gray-100 justify-between items-center bg-white z-10 shadow-sm shrink-0">
+                <div id="detailRef" class="text-xs font-semibold text-gray-400 uppercase tracking-wider"></div>
+                <div class="flex gap-2">
+                    <button onclick="copyOfferData()" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        Copier
+                    </button>
+                    <button onclick="showToast('PDF généré')" class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-2 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        PDF
+                    </button>
+                </div>
+            </div>
+            <div id="detailContent" class="flex-1 overflow-y-auto bg-white p-0">
+                <div class="h-full flex flex-col items-center justify-center text-gray-400"><p class="text-sm">Sélectionnez une ligne à gauche</p></div>
+            </div>
+            <div id="detailActions" class="hidden w-full bg-white border-t border-gray-200 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-3 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] shrink-0"></div>
+        </section>
+    </main>
+
+    <div id="modalContact" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden p-6">
+            <h3 class="font-bold text-gray-900 mb-2">Demander des précisions</h3>
+            <p class="text-xs text-gray-500 mb-4" id="modalContactContext"></p>
+            <textarea class="w-full border border-gray-300 rounded-md p-3 text-sm mb-4" rows="3" placeholder="Votre message..."></textarea>
+            <div class="flex justify-end gap-2">
+                 <button onclick="closeModal('modalContact')" class="px-4 py-2 text-sm font-medium text-gray-700 border rounded-md">Annuler</button>
+                 <button onclick="submitModal('modalContact', 'Message envoyé')" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalLead" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 mb-4">
+                <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Confirmer le positionnement</h3>
+            <p class="text-sm text-gray-500 mb-6" id="modalLeadText"></p>
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmLead()" class="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Confirmer mon intérêt</button>
+                <button onclick="closeModal('modalLead')" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalWaitlist" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 mb-4">
+                <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Rejoindre la liste d'attente</h3>
+            <p class="text-sm text-gray-500 mb-6">Vous serez notifié si ce lot redevient disponible.</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmWaitlist()" class="w-full px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-md">M'inscrire</button>
+                <button onclick="closeModal('modalWaitlist')" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalReply" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden p-6 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Répondre à la demande</h3>
+            <p class="text-sm text-gray-500 mb-6" id="modalReplyText">Confirmez-vous vouloir proposer une offre pour cette demande ?</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmReply()" class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">Envoyer ma réponse</button>
+                <button onclick="closeModal('modalReply')" class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 z-50">
+        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toastMessage" class="font-medium text-sm">Action effectuée</span>
+    </div>
+    
+    <div id="modalLightbox" class="fixed inset-0 z-[100] bg-black/95 hidden flex items-center justify-center fade-in" onclick="closeLightbox()">
+        
+        <button class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors z-[110]">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+
+        <button id="lightboxPrev" onclick="prevImage(event)" class="absolute left-4 md:left-8 text-white/70 hover:text-white transition-colors z-[110] hidden">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+
+        <img id="lightboxImage" src="" class="max-w-full max-h-[90vh] object-contain shadow-2xl rounded-sm transition-opacity duration-200" onclick="event.stopPropagation()">
+
+        <button id="lightboxNext" onclick="nextImage(event)" class="absolute right-4 md:right-8 text-white/70 hover:text-white transition-colors z-[110] hidden">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+    </div>
+
+    <div id="globalTooltip" class="fixed hidden bg-slate-800 text-white text-[10px] font-medium px-3 py-1.5 rounded shadow-xl z-[9999] pointer-events-none transition-opacity duration-150 whitespace-nowrap border border-slate-700"></div>
+    
+        <script src="script.js?v=5"></script>
+</body>
+</html>
