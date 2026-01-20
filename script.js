@@ -53,7 +53,7 @@ const offersData = [
         brokerNote: "Rarissime Blanc de Noirs mil. 2000. Coffret individuel en parfait état.",
         contacted: false,
         contactedDate: null,
-        waitlisted: true,
+        waitlisted: false,
         photos: ["K1.jpeg"]
     },
     {
